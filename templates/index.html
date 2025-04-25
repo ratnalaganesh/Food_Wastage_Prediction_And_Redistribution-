@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-md-12 text-center">
+            <h1 class="display-4 mb-4">Welcome to Food Wastage Prediction</h1>
+            <p class="lead mb-4">Predict and reduce food wastage at your events using our intelligent prediction system.</p>
+            {% if not current_user.is_authenticated %}
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Smart Predictions</h3>
+                    <p class="card-text">Get accurate predictions of food requirements based on event type and attendance.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Location Based</h3>
+                    <p class="card-text">Find nearby organizations to redistribute excess food and reduce wastage.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Track Progress</h3>
+                    <p class="card-text">Monitor your predictions and track the impact of your food management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    {% if current_user.is_authenticated %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center mb-0">Welcome back, {{ current_user.name or current_user.email }}!</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Quick Actions</h4>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <a href="{{ url_for('predict.predict_page') }}" class="btn btn-primary w-100">
+                                        Make a Prediction
+                                    </a>
+                                </li>
+                                <li class="mb-3">
+                                    <a href="{{ url_for('auth.get_profile') }}" class="btn btn-outline-secondary w-100">
+                                        View Profile
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Recent Activity</h4>
+                            <p>No recent predictions. Start by making your first prediction!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

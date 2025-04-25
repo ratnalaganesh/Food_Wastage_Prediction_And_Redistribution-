@@ -1,0 +1,710 @@
+{% extends "base.html" %}
+
+{% block title %}Make a Prediction{% endblock %}
+
+{% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/food-waste-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        margin-bottom: 40px;
+    }
+    
+    .quote-section {
+        background-color: #f8f9fa;
+        padding: 40px 0;
+        margin-bottom: 40px;
+    }
+    
+    .quote-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    
+    .quote-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .quote-icon {
+        font-size: 2rem;
+        color: #28a745;
+        margin-bottom: 15px;
+    }
+
+    .prediction-form {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #ced4da;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .food-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .modal-header {
+        background-color: #28a745;
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .modal-header .btn-close {
+        color: white;
+    }
+
+    .card-header {
+        background-color: #28a745;
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .result-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Food Wastage Prediction</h1>
+        <p class="lead">Make a difference by predicting and preventing food waste</p>
+    </div>
+</div>
+
+<div class="quote-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="quote-card text-center">
+                    <div class="quote-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <p class="mb-0">"Food is not just what we eat. It's an experience, a memory, and a way to connect with others."</p>
+                    <small class="text-muted">- Anonymous</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="quote-card text-center">
+                    <div class="quote-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <p class="mb-0">"Every plate of food saved is a step towards a sustainable future."</p>
+                    <small class="text-muted">- Food Waste Prevention</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="quote-card text-center">
+                    <div class="quote-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <p class="mb-0">"Sharing food is sharing love. Let's make sure no one goes hungry."</p>
+                    <small class="text-muted">- Community Support</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center mb-0">Food Wastage Prediction</h2>
+                </div>
+                <div class="card-body">
+                    <form id="predictionForm" class="prediction-form">
+                        <div class="mb-4">
+                            <label for="eventType" class="form-label">Event Type</label>
+                            <select class="form-select" id="eventType" name="event_type" required>
+                                <option value="">Select event type...</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Corporate">Corporate Event</option>
+                                <option value="Birthday">Birthday Party</option>
+                                <option value="Festival">Festival</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="attendance" class="form-label">Expected Number of Plates</label>
+                            <input type="number" class="form-control" id="attendance" name="attendance" min="1" required>
+                            <small class="form-text text-muted">Enter the number of plates you plan to prepare</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="actualAttendance" class="form-label">Actual Number of Attendees</label>
+                            <input type="number" class="form-control" id="actualAttendance" name="actual_attendance" min="0" required>
+                            <small class="form-text text-muted">Enter the actual number of people who attended the event</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="foodItems" class="form-label">Food Items</label>
+                            <div id="foodItemsList">
+                                <div class="food-item mb-2">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="food_name[]" placeholder="Food Item Name" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control" name="food_quantity[]" placeholder="Quantity" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <select class="form-select" name="food_unit[]" required>
+                                                <option value="kg">kg</option>
+                                                <option value="plates">plates</option>
+                                                <option value="pieces">pieces</option>
+                                                <option value="liters">liters</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addFoodItem()">
+                                <i class="fas fa-plus"></i> Add Another Food Item
+                            </button>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label d-block">Location Type</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="locationType" id="currentLocation" value="current" checked>
+                                <label class="form-check-label" for="currentLocation">Use Current Location</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="locationType" id="manualLocation" value="manual">
+                                <label class="form-check-label" for="manualLocation">Enter Location Manually</label>
+                            </div>
+                        </div>
+
+                        <div id="manualLocationFields" class="mb-4" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="state" class="form-label">State</label>
+                                    <input type="text" class="form-control" id="state" name="state">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Get Prediction</button>
+                        </div>
+                    </form>
+
+                    <div id="result" class="prediction-result mt-4" style="display: none;">
+                        <h3 class="text-center mb-4">Prediction Results</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-utensils text-primary result-icon"></i>
+                                        <h5>Recommended Plates</h5>
+                                        <p class="h3 text-primary" id="recommendedQuantity"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-recycle text-danger result-icon"></i>
+                                        <h5>Estimated Wastage</h5>
+                                        <p class="h3 text-danger" id="estimatedWastage"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="organizations" class="mt-4">
+                            <h4 class="text-center mb-3">Select Organization for Food Redistribution</h4>
+                            <div id="apiMessage" class="alert alert-info" style="display: none;"></div>
+                            
+                            <div class="row" id="organizationsList">
+                                <!-- Organizations will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Organization Selection Modal -->
+<div class="modal fade" id="organizationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Organization Selection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="organizationDetails"></div>
+                <form id="redistributionForm" class="mt-3">
+                    <div class="mb-3">
+                        <label for="plateCount" class="form-label">Number of Plates to Donate</label>
+                        <input type="number" class="form-control" id="plateCount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pickupTime" class="form-label">Preferred Pickup Time</label>
+                        <input type="time" class="form-control" id="pickupTime" required>
+                        <small class="form-text text-muted">Please select a time at least 2 hours from now</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="additionalNotes" class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="additionalNotes" rows="3" 
+                            placeholder="Any special instructions for pickup or food handling..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="showConfirmationPage()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Page Modal -->
+<div class="modal fade" id="confirmationPageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Donation Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3">Organization Details</h6>
+                        <div id="confirmationOrgDetails"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-3">Donation Details</h6>
+                        <div id="confirmationDonationDetails"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+                <button type="button" class="btn btn-primary" onclick="confirmRedistribution()">Confirm Donation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Donation Confirmed!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                </div>
+                <div class="alert alert-info alert-dismissible fade show mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Our Agent will contact you soon
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div id="successDetails"></div>
+                <div class="mt-4">
+                    <h6>Next Steps:</h6>
+                    <ul id="nextStepsList" class="list-unstyled">
+                        <!-- Next steps will be populated here -->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle location type toggle
+    const locationTypeRadios = document.querySelectorAll('input[name="locationType"]');
+    const manualLocationFields = document.getElementById('manualLocationFields');
+
+    locationTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            manualLocationFields.style.display = this.value === 'manual' ? 'block' : 'none';
+        });
+    });
+
+    // Get current location function
+    async function getCurrentLocation() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject('Geolocation is not supported by your browser');
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                position => resolve({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }),
+                error => reject(error.message)
+            );
+        });
+    }
+
+    // Handle form submission
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        let locationData;
+        const locationType = document.querySelector('input[name="locationType"]:checked').value;
+
+        try {
+            if (locationType === 'current') {
+                locationData = await getCurrentLocation();
+            } else {
+                locationData = {
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    country: 'India' // Default to India
+                };
+            }
+
+            // Collect food items data
+            const foodItems = [];
+            const foodNames = document.getElementsByName('food_name[]');
+            const foodQuantities = document.getElementsByName('food_quantity[]');
+            const foodUnits = document.getElementsByName('food_unit[]');
+
+            for (let i = 0; i < foodNames.length; i++) {
+                foodItems.push({
+                    name: foodNames[i].value,
+                    quantity: parseFloat(foodQuantities[i].value),
+                    unit: foodUnits[i].value
+                });
+            }
+
+            const formData = {
+                event_type: document.getElementById('eventType').value,
+                plates: parseInt(document.getElementById('attendance').value),
+                actual_attendance: parseInt(document.getElementById('actualAttendance').value),
+                food_items: foodItems,
+                location: locationData
+            };
+
+            const response = await fetch('/predict/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('recommendedQuantity').textContent = `${data.recommended_plates} plates`;
+                document.getElementById('estimatedWastage').textContent = `${data.estimated_wastage} plates`;
+                
+                // Show API message if exists
+                const apiMessage = document.getElementById('apiMessage');
+                if (data.message) {
+                    apiMessage.textContent = data.message;
+                    apiMessage.style.display = 'block';
+                } else {
+                    apiMessage.style.display = 'none';
+                }
+
+                const organizationsList = document.getElementById('organizationsList');
+                organizationsList.innerHTML = '';
+                
+                // Group organizations by type
+                const groups = {
+                    'NGO': data.nearby_organizations.ngos || [],
+                    'Charity': data.nearby_organizations.charities || [],
+                    'Old Age Home': data.nearby_organizations.old_age_homes || []
+                };
+
+                for (const [type, orgs] of Object.entries(groups)) {
+                    if (orgs.length > 0) {
+                        const groupDiv = document.createElement('div');
+                        groupDiv.className = 'col-12 mb-4';
+                        groupDiv.innerHTML = `
+                            <h5 class="text-center mb-4">${type}s</h5>
+                            <div class="row">
+                                ${orgs.map(org => `
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <div class="text-center mb-3">
+                                                    <i class="fas fa-building text-success" style="font-size: 2rem;"></i>
+                                                </div>
+                                                <h6 class="card-title text-center">${org.name}</h6>
+                                                <p class="card-text">
+                                                    <div class="mb-2">
+                                                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                                        <small class="text-muted">${org.distance} km away</small>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <i class="fas fa-address-card text-primary me-2"></i>
+                                                        <small>${org.address || 'Address not available'}</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <i class="fas fa-users text-success me-2"></i>
+                                                        <small>Capacity: ${org.capacity || 'Not specified'}</small>
+                                                    </div>
+                                                </p>
+                                                <div class="text-center">
+                                                    <button class="btn btn-outline-success btn-sm" 
+                                                            onclick='selectOrganization(${JSON.stringify(org).replace(/'/g, "\\'")})'>
+                                                        <i class="fas fa-hand-holding-heart me-2"></i>Select for Donation
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        organizationsList.appendChild(groupDiv);
+                    }
+                }
+                
+                document.getElementById('result').style.display = 'block';
+            } else {
+                alert(data.error || 'An error occurred');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while making the prediction: ' + error);
+        }
+    });
+});
+
+function addFoodItem() {
+    const foodItemsList = document.getElementById('foodItemsList');
+    const newItem = document.createElement('div');
+    newItem.className = 'food-item mb-2';
+    newItem.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="food_name[]" placeholder="Food Item Name" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" class="form-control" name="food_quantity[]" placeholder="Quantity" required>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="food_unit[]" required>
+                    <option value="kg">kg</option>
+                    <option value="plates">plates</option>
+                    <option value="pieces">pieces</option>
+                    <option value="liters">liters</option>
+                </select>
+            </div>
+        </div>
+    `;
+    foodItemsList.appendChild(newItem);
+}
+
+let selectedOrganization = null;
+const organizationModal = new bootstrap.Modal(document.getElementById('organizationModal'));
+const confirmationPageModal = new bootstrap.Modal(document.getElementById('confirmationPageModal'));
+const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+
+function selectOrganization(org) {
+    selectedOrganization = org;
+    
+    // Update modal content
+    const details = document.getElementById('organizationDetails');
+    details.innerHTML = `
+        <div class="alert alert-info alert-dismissible fade show mb-3">
+            <i class="fas fa-info-circle me-2"></i>Our Agent will contact you soon
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <h6>${org.name}</h6>
+        <p>
+            <strong>Address:</strong> ${org.address}<br>
+            <strong>Distance:</strong> ${org.distance} km<br>
+            <strong>Contact:</strong> ${org.phone}<br>
+            <strong>Capacity:</strong> ${org.capacity || 'Not specified'}
+        </p>
+    `;
+    
+    // Set default values for the form
+    document.getElementById('plateCount').value = document.getElementById('estimatedWastage').textContent.split(' ')[0];
+    document.getElementById('pickupTime').value = '12:00';
+    document.getElementById('additionalNotes').value = '';
+    
+    // Show the modal
+    organizationModal.show();
+}
+
+function showConfirmationPage() {
+    const plateCount = document.getElementById('plateCount').value;
+    const pickupTime = document.getElementById('pickupTime').value;
+    const notes = document.getElementById('additionalNotes').value;
+    
+    // Validate inputs
+    if (!plateCount || !pickupTime) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Validate pickup time is at least 2 hours from now
+    const selectedTime = new Date();
+    const [hours, minutes] = pickupTime.split(':');
+    selectedTime.setHours(parseInt(hours), parseInt(minutes));
+    
+    const minTime = new Date();
+    minTime.setHours(minTime.getHours() + 2);
+    
+    if (selectedTime < minTime) {
+        alert('Please select a pickup time at least 2 hours from now');
+        return;
+    }
+
+    // Update confirmation page content
+    document.getElementById('confirmationOrgDetails').innerHTML = `
+        <p>
+            <strong>Name:</strong> ${selectedOrganization.name}<br>
+            <strong>Address:</strong> ${selectedOrganization.address}<br>
+            <strong>Distance:</strong> ${selectedOrganization.distance} km<br>
+            <strong>Contact:</strong> ${selectedOrganization.phone}<br>
+            <strong>Capacity:</strong> ${selectedOrganization.capacity || 'Not specified'}
+        </p>
+    `;
+
+    document.getElementById('confirmationDonationDetails').innerHTML = `
+        <p>
+            <strong>Number of Plates:</strong> ${plateCount}<br>
+            <strong>Pickup Time:</strong> ${pickupTime}<br>
+            <strong>Additional Notes:</strong> ${notes || 'None'}
+        </p>
+    `;
+
+    // Hide organization modal and show confirmation page
+    organizationModal.hide();
+    confirmationPageModal.show();
+}
+
+function goBack() {
+    confirmationPageModal.hide();
+    organizationModal.show();
+}
+
+async function confirmRedistribution() {
+    const plateCount = document.getElementById('plateCount').value;
+    const pickupTime = document.getElementById('pickupTime').value;
+    const notes = document.getElementById('additionalNotes').value;
+    
+    try {
+        const response = await fetch('/predict/confirm-donation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                organization: selectedOrganization,
+                plateCount: plateCount,
+                pickupTime: pickupTime,
+                notes: notes
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Hide confirmation page modal
+            confirmationPageModal.hide();
+            
+            // Update success modal content
+            document.getElementById('successDetails').innerHTML = `
+                <dl class="row">
+                    <dt class="col-sm-4">Organization:</dt>
+                    <dd class="col-sm-8">${selectedOrganization.name}</dd>
+                    
+                    <dt class="col-sm-4">Plates:</dt>
+                    <dd class="col-sm-8">${plateCount}</dd>
+                    
+                    <dt class="col-sm-4">Pickup Time:</dt>
+                    <dd class="col-sm-8">${pickupTime}</dd>
+                    
+                    <dt class="col-sm-4">Contact:</dt>
+                    <dd class="col-sm-8">${selectedOrganization.phone}</dd>
+                </dl>
+            `;
+            
+            // Show next steps
+            const nextStepsList = document.getElementById('nextStepsList');
+            nextStepsList.innerHTML = data.next_steps.map(step => 
+                `<li class="mb-2"><i class="fas fa-arrow-right text-success me-2"></i>${step}</li>`
+            ).join('');
+            
+            // Show success modal
+            successModal.show();
+        } else {
+            throw new Error(data.error || 'Failed to confirm donation');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while confirming the donation: ' + error.message);
+    }
+}
+</script>
+{% endblock %} 

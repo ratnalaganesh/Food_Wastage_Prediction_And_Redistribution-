@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Food Wastage Prediction{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 120px 0;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(40, 167, 69, 0.2), rgba(0, 0, 0, 0.7));
+        z-index: 1;
+    }
+
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1.5rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-section {
+        padding: 60px 0;
+        background-color: #f8f9fa;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+
+    .feature-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .prediction-section {
+        padding: 60px 0;
+    }
+
+    .prediction-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .prediction-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .btn-predict {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+        padding: 15px 40px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-predict:hover {
+        background: linear-gradient(45deg, #218838, #1e7e34);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+</style>
+
+<div class="hero-section text-center">
+    <div class="container">
+        <h1>Food Wastage Prediction</h1>
+        <p class="lead">Make a difference by predicting and preventing food waste</p>
+    </div>
+</div>
+
+<div class="feature-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Food Waste" class="feature-image">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Smart Prediction</h4>
+                    <p>Accurately predict food wastage based on event details and historical data</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Food Donation" class="feature-image">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h4>Easy Donation</h4>
+                    <p>Connect with nearby organizations to donate excess food</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Impact" class="feature-image">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h4>Positive Impact</h4>
+                    <p>Help reduce food waste and make a difference in your community</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="prediction-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="prediction-card">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Start Prediction" class="prediction-image">
+                    <div class="text-center">
+                        <h3 class="mb-4">Ready to Make a Difference?</h3>
+                        <p class="lead mb-4">Start predicting food wastage and connect with organizations to donate excess food</p>
+                        <a href="{{ url_for('predict') }}" class="btn btn-predict">
+                            <i class="fas fa-calculator me-2"></i>Start Prediction
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
